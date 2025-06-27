@@ -141,16 +141,20 @@ backend/uploads/
 # 编译和构建相关
 # ===================================
 
-# llama.cpp 编译文件
-llama.cpp/build/
-llama.cpp/models/
-llama.cpp/*.o
-llama.cpp/*.a
-llama.cpp/main
-llama.cpp/server
-llama.cpp/llama-server
-llama.cpp/quantize
-llama.cpp/perplexity
+# llama.cpp 相关文件 (作为外部依赖，不纳入版本控制)
+llama.cpp/
+llama-cpp/
+
+# llama.cpp 编译文件 (如果需要包含源码)
+# llama.cpp/build/
+# llama.cpp/models/
+# llama.cpp/*.o
+# llama.cpp/*.a
+# llama.cpp/main
+# llama.cpp/server
+# llama.cpp/llama-server
+# llama.cpp/quantize
+# llama.cpp/perplexity
 
 # CMake 文件
 CMakeCache.txt
