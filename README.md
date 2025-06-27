@@ -1,22 +1,42 @@
-# 🤖 LLM Backend - 轻量级大语言模型后端服务
+# 🤖 LLM API - 轻量级大语言模型 API 服务
 
 [![Go Version](https://img.shields.io/badge/Go-1.21+-blue.svg)](https://golang.org)
+[![Java Version](https://img.shields.io/badge/Java-11+-orange.svg)](https://openjdk.org)
 [![Vue Version](https://img.shields.io/badge/Vue-3.0+-green.svg)](https://vuejs.org)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)]()
 
-一个基于 Go 和 Vue 3 开发的轻量级大语言模型后端服务，集成多个开源 LLM 模型，提供文件格式转换、作业批改、字幕处理等 AI 功能。
+一个混合架构的轻量级大语言模型 API 服务，采用 Go + Java Spring Boot + Vue 3 技术栈，集成多个开源 LLM 模型，提供文件格式转换、作业批改、字幕处理等 AI 功能。
 
 ## ✨ 核心特性
 
 - 🚀 **多模型支持** - 集成 Qwen、DeepSeek、Yi、Mistral 等多个轻量级模型
 - 🔄 **动态模型管理** - 支持模型的动态启动、停止和切换，节省系统资源
 - 🎯 **专用任务处理** - 文件格式转换、作业批改、字幕处理等专门优化的功能
-- 🔐 **完整认证系统** - JWT 认证、Token 管理、用户权限控制
-- ⚡ **高性能架构** - 负载均衡、连接池、智能缓存机制
-- 🌐 **现代化前端** - Vue 3 + Element Plus 响应式 Web 界面
+- 🔐 **完整认证系统** - JWT 认证、Keycloak 集成、用户权限控制
+- ⚡ **混合架构** - Go 高性能 API 服务 + Java Spring Boot 业务逻辑
+- 🌐 **现代化前端** - Vue 3 + Element Plus + Vite 响应式 Web 界面
 - 📊 **监控与日志** - 完整的请求追踪和性能监控
 - 🧪 **完善测试** - 提供多种测试脚本和工具
+
+## 🏗️ 项目架构
+
+### 技术栈
+- **后端 API 服务**: Go 1.21+ (Gin 框架)
+- **业务逻辑服务**: Java 11+ (Spring Boot 2.7+)
+- **前端界面**: Vue 3 + Element Plus + Vite
+- **模型推理**: llama.cpp (GGUF 格式)
+- **认证系统**: Keycloak + JWT
+- **数据库**: SQLite / MySQL
+
+### 服务架构
+```
+Frontend (Vue 3) → Go API Server → Java Spring Boot → llama.cpp
+                                ↓
+                           Keycloak Auth
+                                ↓
+                           SQLite/MySQL
+```
 
 ## 📋 系统要求
 
@@ -25,6 +45,7 @@
 - **内存**: 16GB RAM
 - **存储**: 20GB 可用空间
 - **操作系统**: macOS 10.15+ / Ubuntu 20.04+ / CentOS 8+
+- **软件依赖**: Go 1.21+, Java 11+, Node.js 16+
 
 ### 推荐配置
 - **CPU**: 16 核心以上 (Intel/AMD/Apple Silicon)
@@ -39,15 +60,15 @@
 ```bash
 # 克隆项目
 git clone <your-repo-url>
-cd llm
+cd LLM_API
 
 # 安装系统依赖 (Ubuntu/Debian)
 sudo apt update
 sudo apt install -y build-essential git wget curl
-sudo apt install -y openjdk-11-jdk maven
+sudo apt install -y openjdk-11-jdk maven nodejs npm
 
 # 安装系统依赖 (macOS)
-brew install git wget curl maven
+brew install git wget curl maven node
 # Java 11 通过 brew 或 Oracle 官网安装
 ```
 
@@ -57,44 +78,54 @@ brew install git wget curl maven
 # 运行自动化设置脚本
 chmod +x setup-llama-cpp.sh
 ./setup-llama-cpp.sh
-
-# 检查系统信息
-./system-info.sh
 ```
 
 ### 3. 下载模型
 
 ```bash
-# 下载推荐的 CPU 优化模型
-./download-models.sh
-
-# 或手动下载特定模型
-wget https://huggingface.co/Qwen/Qwen2-7B-Instruct-GGUF/resolve/main/qwen2-7b-instruct-q4_k_m.gguf -P models/
+# 手动下载模型到 models/ 目录
+# 项目已包含多个预下载的模型文件
+ls models/
 ```
 
 ### 4. 构建和启动服务
 
+#### 启动后端服务 (Go)
 ```bash
-# 构建 Java 应用
+cd backend
+go mod tidy
+go run main.go
+# 服务运行在 http://localhost:8080
+```
+
+#### 启动业务逻辑服务 (Java Spring Boot)
+```bash
+# 在项目根目录
 mvn clean package -DskipTests
-
-# 启动服务
+java -jar target/*.jar
+# 或使用启动脚本
 ./start-llm-service.sh
+```
 
-# 或手动启动
-java -jar target/*.jar --spring.profiles.active=cpu
+#### 启动前端服务 (Vue 3)
+```bash
+cd frontend
+npm install
+npm run dev
+# 前端运行在 http://localhost:5173
 ```
 
 ### 5. 测试部署
 
 ```bash
-# 测试模型推理
-./test-model.sh
+# 测试 Go API 服务
+cd backend
+./test_all_apis.sh
 
-# 测试 API 接口
-curl -X POST http://localhost:8080/api/v1/chat/generate \
+# 测试单个 API
+curl -X POST http://localhost:8080/api/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "你好，请介绍一下你自己"}'
+  -d '{"message": "你好，请介绍一下你自己", "model": "qwen2-7b-instruct-q4_k_m"}'
 ```
 
 ## 🔧 配置说明
@@ -112,23 +143,26 @@ curl -X POST http://localhost:8080/api/v1/chat/generate \
 
 ### 性能调优
 
-#### CPU 线程配置
-```yaml
-# application-cpu.yml
-app:
-  models:
-    inference-mode: direct  # direct 或 server
-  llama:
-    threads: 12  # 建议设置为 CPU 核心数的 75%
+#### Go 服务配置
+```bash
+# 设置 Go 运行时参数
+export GOMAXPROCS=12  # 建议设置为 CPU 核心数
+export GOGC=100       # GC 触发百分比
 ```
 
-#### JVM 优化
+#### Java Spring Boot 配置
 ```bash
-# 内存配置
+# JVM 内存配置
 export JAVA_OPTS="-Xmx8g -Xms4g -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
 
 # 针对大内存服务器
 export JAVA_OPTS="-Xmx16g -Xms8g -XX:+UseG1GC -XX:G1HeapRegionSize=16m"
+```
+
+#### llama.cpp 线程配置
+```bash
+# 在启动 llama-server 时设置线程数
+./llama-cpp/llama-server -m models/qwen2-7b-instruct-q4_k_m.gguf -t 12
 ```
 
 ## 📊 性能基准
@@ -147,33 +181,56 @@ export JAVA_OPTS="-Xmx16g -Xms8g -XX:+UseG1GC -XX:G1HeapRegionSize=16m"
 
 ## 🔌 API 接口
 
-### 聊天接口
+### Go API 服务 (端口 8080)
+
+#### 聊天接口
 ```bash
-POST /api/v1/chat/generate
+POST /api/chat
 Content-Type: application/json
 
 {
   "message": "你好，请帮我写一个 Python 函数",
-  "modelName": "Qwen2-7B-Instruct",
+  "model": "qwen2-7b-instruct-q4_k_m",
   "temperature": 0.7,
-  "maxTokens": 500,
-  "systemPrompt": "你是一个专业的编程助手"
+  "max_tokens": 500
 }
 ```
 
-### 模型管理
+#### 模型管理
 ```bash
 # 获取可用模型
-GET /api/v1/models/available
+GET /api/models
 
-# 获取当前模型
-GET /api/v1/models/current
+# 获取模型状态
+GET /api/models/status
 
-# 切换模型 (需要管理员权限)
-POST /api/v1/models/load/Qwen2-7B-Instruct
+# 切换模型
+POST /api/models/switch
+{
+  "model": "qwen2-7b-instruct-q4_k_m"
+}
+```
 
-# 获取系统状态
-GET /api/v1/models/status
+#### 文件处理
+```bash
+# 文件上传和处理
+POST /api/upload
+Content-Type: multipart/form-data
+
+# 文件格式转换
+POST /api/convert
+```
+
+### Java Spring Boot 服务 (端口 8081)
+
+#### 认证接口
+```bash
+# 用户登录
+POST /api/auth/login
+
+# 获取用户信息
+GET /api/auth/user
+Authorization: Bearer <token>
 ```
 
 ## 🔐 安全配置
@@ -201,82 +258,98 @@ keycloak:
 
 ## 🐳 Docker 部署
 
-### Dockerfile
-```dockerfile
-FROM openjdk:11-jre-slim
+项目提供了完整的 Docker 部署方案，包含所有服务组件。
 
-# 安装构建工具
-RUN apt-get update && apt-get install -y \
-    build-essential git wget curl \
-    && rm -rf /var/lib/apt/lists/*
+### 使用 Docker Compose (推荐)
+```bash
+# 一键启动所有服务
+docker-compose up -d
 
-# 复制应用
-COPY target/*.jar app.jar
-COPY llama-cpp/ /app/llama-cpp/
-COPY models/ /app/models/
+# 查看服务状态
+docker-compose ps
 
-WORKDIR /app
-
-EXPOSE 8080
-
-CMD ["java", "-jar", "app.jar", "--spring.profiles.active=cpu"]
+# 查看日志
+docker-compose logs -f
 ```
 
-### Docker Compose
-```yaml
-version: '3.8'
-services:
-  llm-app:
-    build: .
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=cpu
-      - JAVA_OPTS=-Xmx8g -Xms4g
-    volumes:
-      - ./models:/app/models
-      - ./logs:/app/logs
-    depends_on:
-      - keycloak
-      
-  keycloak:
-    image: quay.io/keycloak/keycloak:latest
-    ports:
-      - "8081:8080"
-    environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-    command: start-dev
+### 服务端口映射
+- **前端服务**: http://localhost:3000
+- **Go API 服务**: http://localhost:8080
+- **Java Spring Boot**: http://localhost:8081
+- **Keycloak**: http://localhost:8082
+
+### 自定义 Dockerfile
+
+#### Go 服务 Dockerfile
+```dockerfile
+FROM golang:1.21-alpine AS builder
+WORKDIR /app
+COPY backend/ .
+RUN go mod tidy && go build -o main .
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY --from=builder /app/main .
+EXPOSE 8080
+CMD ["./main"]
+```
+
+#### 前端 Dockerfile
+```dockerfile
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY frontend/package*.json ./
+RUN npm install
+COPY frontend/ .
+RUN npm run build
+
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80
 ```
 
 ## 🔧 故障排除
 
 ### 常见问题
 
-1. **内存不足**
+1. **Go 服务启动失败**
+```bash
+# 检查端口占用
+lsof -i :8080
+# 检查 Go 版本
+go version
+# 重新编译
+cd backend && go build -o main .
+```
+
+2. **Java 服务内存不足**
 ```bash
 # 检查内存使用
 free -h
-# 减少 JVM 堆内存或使用更小的模型
+# 减少 JVM 堆内存
 export JAVA_OPTS="-Xmx4g -Xms2g"
 ```
 
-2. **模型加载失败**
+3. **模型加载失败**
 ```bash
 # 检查模型文件
 ls -la models/
 # 验证文件完整性
 file models/*.gguf
+# 检查 llama-server 进程
+ps aux | grep llama-server
 ```
 
-3. **推理速度慢**
+4. **前端构建失败**
 ```bash
-# 调整线程数
-# 在 application-cpu.yml 中设置合适的线程数
-threads: 8  # 根据 CPU 核心数调整
+# 清理依赖重新安装
+cd frontend
+rm -rf node_modules package-lock.json
+npm install
 ```
 
-4. **llama.cpp 编译失败**
+5. **llama.cpp 编译失败**
 ```bash
 # 清理重新编译
 cd llama-cpp
@@ -286,34 +359,55 @@ make -j$(nproc)
 
 ### 日志分析
 ```bash
-# 查看应用日志
+# 查看 Go 服务日志
+tail -f logs/http.log
+
+# 查看 Java 服务日志
 tail -f logs/llm-app.log
 
-# 查看推理性能
-grep "inference time" logs/llm-app.log
+# 查看 llama-server 日志
+tail -f logs/llama-server.log
 ```
 
 ## 📈 监控和运维
 
 ### 健康检查
 ```bash
-# 应用健康状态
-curl http://localhost:8080/actuator/health
+# Go API 服务健康检查
+curl http://localhost:8080/api/health
 
-# 系统指标
-curl http://localhost:8080/actuator/metrics
+# Java Spring Boot 健康检查
+curl http://localhost:8081/actuator/health
+
+# 前端服务检查
+curl http://localhost:5173
 ```
 
 ### 性能监控
 ```bash
-# CPU 使用率
-top -p $(pgrep java)
+# 检查所有服务进程
+ps aux | grep -E "(main|java|node)"
 
-# 内存使用
+# Go 服务内存使用
+ps aux | grep main
+
+# Java 服务内存使用
 ps aux | grep java
 
-# 推理统计
-curl http://localhost:8080/api/v1/models/status
+# 模型推理统计
+curl http://localhost:8080/api/models/status
+```
+
+### 服务管理脚本
+```bash
+# 启动所有服务
+./start-llm-service.sh
+
+# 停止所有服务
+./stop-llm-service.sh
+
+# 重启服务
+./stop-llm-service.sh && ./start-llm-service.sh
 ```
 
 ## 🚀 生产部署建议
@@ -321,29 +415,51 @@ curl http://localhost:8080/api/v1/models/status
 1. **硬件配置**
    - 使用 SSD 存储模型文件
    - 配置足够的 RAM (模型大小 × 1.5)
-   - 选择高频 CPU
+   - 选择高频 CPU (推荐 16+ 核心)
 
 2. **系统优化**
    - 关闭不必要的系统服务
    - 设置 CPU 性能模式
-   - 优化网络配置
+   - 优化网络配置和文件描述符限制
 
 3. **应用配置**
    - 使用生产级数据库 (MySQL/PostgreSQL)
-   - 配置日志轮转
-   - 设置监控告警
+   - 配置 Nginx 反向代理和负载均衡
+   - 设置日志轮转和监控告警
+   - 配置 HTTPS 和 SSL 证书
 
-4. **安全加固**
-   - 启用 HTTPS
-   - 配置防火墙
-   - 定期更新依赖
+4. **服务部署**
+   - 使用 Docker Compose 或 Kubernetes
+   - 配置服务自动重启和健康检查
+   - 设置资源限制和环境变量
+
+5. **安全加固**
+   - 启用 Keycloak 认证和授权
+   - 配置防火墙和网络安全组
+   - 定期更新依赖和安全补丁
+   - 设置 API 限流和访问控制
 
 ## 📚 参考资源
 
+### 核心技术文档
+- [Go 官方文档](https://golang.org/doc/)
+- [Gin Web 框架](https://gin-gonic.com/docs/)
+- [Vue 3 官方文档](https://vuejs.org/guide/)
+- [Element Plus 组件库](https://element-plus.org/)
+- [Spring Boot 官方文档](https://spring.io/projects/spring-boot)
+
+### AI 模型相关
 - [llama.cpp 官方文档](https://github.com/ggerganov/llama.cpp)
 - [Qwen2 模型文档](https://huggingface.co/Qwen)
-- [Spring Boot 官方文档](https://spring.io/projects/spring-boot)
+- [GGUF 格式说明](https://github.com/ggerganov/ggml/blob/master/docs/gguf.md)
+
+### 认证和安全
 - [Keycloak 官方文档](https://www.keycloak.org/documentation)
+- [JWT 认证指南](https://jwt.io/introduction)
+
+### 部署和运维
+- [Docker 官方文档](https://docs.docker.com/)
+- [Docker Compose 指南](https://docs.docker.com/compose/)
 
 ## 🤝 贡献指南
 
