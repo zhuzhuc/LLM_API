@@ -1,35 +1,292 @@
-HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**
-!**/src/test/**
+# LLM Backend Project .gitignore
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+# ===================================
+# Go 相关文件
+# ===================================
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
+# 编译后的二进制文件
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+llm-server
+main
+backend/llm-server
+backend/main
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
+# Go 测试文件
+*.test
 
-### VS Code ###
+# Go 覆盖率文件
+*.out
+*.prof
+
+# Go 模块缓存
+go.sum
+
+# Go 工作区文件
+go.work
+go.work.sum
+
+# 依赖目录
+vendor/
+
+# ===================================
+# Node.js / 前端相关文件
+# ===================================
+
+# 依赖目录
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 构建输出
+frontend/dist/
+frontend/build/
+
+# 环境变量文件
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 包管理器锁文件 (可选择性忽略)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# ===================================
+# 模型文件 (通常很大，不适合上传)
+# ===================================
+
+# GGUF 模型文件
+*.gguf
+*.bin
+*.safetensors
+
+# 模型目录
+models/
+!models/.gitkeep
+!models/README.md
+
+# 模型缓存
+.cache/
+huggingface/
+
+# ===================================
+# 数据库文件
+# ===================================
+
+# SQLite 数据库
+*.db
+*.sqlite
+*.sqlite3
+database.db
+backend/database.db
+
+# 数据库备份
+*.sql
+*.dump
+
+# ===================================
+# 日志文件
+# ===================================
+
+# 应用日志
+logs/
+*.log
+backend/logs/
+frontend/logs/
+
+# 系统日志
+nohup.out
+
+# ===================================
+# 临时文件和缓存
+# ===================================
+
+# 操作系统生成的文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 编辑器和IDE文件
 .vscode/
+.idea/
+*.swp
+*.swo
+*~
+.vim/
+.emacs.d/
 
+# 临时目录
+tmp/
+temp/
+.tmp/
 
-### NodeJS ###
-/node_modules/
+# 上传文件目录
+uploads/
+backend/uploads/
+!uploads/.gitkeep
+
+# ===================================
+# 编译和构建相关
+# ===================================
+
+# llama.cpp 编译文件
+llama.cpp/build/
+llama.cpp/models/
+llama.cpp/*.o
+llama.cpp/*.a
+llama.cpp/main
+llama.cpp/server
+llama.cpp/llama-server
+llama.cpp/quantize
+llama.cpp/perplexity
+
+# CMake 文件
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+
+# 编译输出
+*.o
+*.a
+*.so.*
+
+# ===================================
+# 配置文件 (包含敏感信息)
+# ===================================
+
+# 包含密钥的配置文件
+config/production.yaml
+config/secrets.yaml
+.env.production
+
+# SSL 证书
+*.pem
+*.key
+*.crt
+*.p12
+ssl/
+
+# ===================================
+# 测试和覆盖率
+# ===================================
+
+# 测试输出
+test-results/
+coverage/
+*.cover
+*.coverage
+
+# 性能测试结果
+benchmark/
+*.bench
+
+# ===================================
+# 部署相关
+# ===================================
+
+# Docker 相关
+.dockerignore
+
+# Kubernetes 配置 (如果包含敏感信息)
+k8s/secrets/
+*.secret.yaml
+
+# 部署脚本中的敏感信息
+deploy/production/
+.deploy/
+
+# ===================================
+# 备份文件
+# ===================================
+
+# 备份文件
+*.bak
+*.backup
+*.old
+*~
+
+# 压缩文件
+*.tar.gz
+*.zip
+*.rar
+*.7z
+
+# ===================================
+# 开发工具
+# ===================================
+
+# Air (Go 热重载工具)
+.air.toml
+tmp/
+
+# 调试文件
+debug
+*.pprof
+
+# ===================================
+# 项目特定文件
+# ===================================
+
+# 测试输出文件
+test_results.log
+api_test_output.txt
+
+# 性能测试结果
+performance_results/
+
+# 文档生成的临时文件
+docs/build/
+
+# 本地开发配置
+.local/
+local.config.yaml
+
+# ===================================
+# 安全相关
+# ===================================
+
+# 私钥文件
+*.private
+private_keys/
+
+# Token 文件
+.tokens
+tokens.txt
+
+# 密码文件
+passwords.txt
+.passwords
+
+# ===================================
+# 其他
+# ===================================
+
+# 大文件
+*.iso
+*.dmg
+*.img
+
+# 媒体文件 (如果不需要版本控制)
+*.mp4
+*.avi
+*.mov
+*.mp3
+*.wav
+
+# 文档的临时文件
+*.tmp.md
+*.draft.md
