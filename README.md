@@ -1,7 +1,6 @@
 # 🤖 LLM API - 轻量级大语言模型 API 服务
 
 [![Go Version](https://img.shields.io/badge/Go-1.21+-blue.svg)](https://golang.org)
-[![Java Version](https://img.shields.io/badge/Java-11+-orange.svg)](https://openjdk.org)
 [![Vue Version](https://img.shields.io/badge/Vue-3.0+-green.svg)](https://vuejs.org)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)]()
