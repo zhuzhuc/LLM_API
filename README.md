@@ -1,40 +1,38 @@
-# 🤖 LLM API - 轻量级大语言模型 API 服务
+# 轻量级大语言模型 API 服务
 
 [![Go Version](https://img.shields.io/badge/Go-1.21+-blue.svg)](https://golang.org)
 [![Vue Version](https://img.shields.io/badge/Vue-3.0+-green.svg)](https://vuejs.org)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)]()
 
-一个混合架构的轻量级大语言模型 API 服务，采用 Go + Java Spring Boot + Vue 3 技术栈，集成多个开源 LLM 模型，提供文件格式转换、作业批改、字幕处理等 AI 功能。
+一个基于 Go + Vue 3 的轻量级大语言模型 API 服务，集成多个开源 LLM 模型，提供文件格式转换、作业批改、字幕处理等 AI 功能。
 
 ## ✨ 核心特性
 
-- 🚀 **多模型支持** - 集成 Qwen、DeepSeek、Yi、Mistral 等多个轻量级模型
-- 🔄 **动态模型管理** - 支持模型的动态启动、停止和切换，节省系统资源
-- 🎯 **专用任务处理** - 文件格式转换、作业批改、字幕处理等专门优化的功能
-- 🔐 **完整认证系统** - JWT 认证、Keycloak 集成、用户权限控制
-- ⚡ **混合架构** - Go 高性能 API 服务 + Java Spring Boot 业务逻辑
-- 🌐 **现代化前端** - Vue 3 + Element Plus + Vite 响应式 Web 界面
-- 📊 **监控与日志** - 完整的请求追踪和性能监控
-- 🧪 **完善测试** - 提供多种测试脚本和工具
+- **多模型支持** - 集成 Qwen、DeepSeek、Yi、Mistral 等多个轻量级模型
+- **动态模型管理** - 支持模型的动态启动、停止和切换，节省系统资源
+- **专用任务处理** - 文件格式转换、作业批改、字幕处理等专门优化的功能
+- **简单认证系统** - JWT 认证、Token 管理、用户权限控制
+- **高性能架构** - Go 高性能 API 服务 + llama.cpp 推理引擎
+- **现代化前端** - Vue 3 + Element Plus + Vite 响应式 Web 界面
+- **监控与日志** - 完整的请求追踪和性能监控
+- **完善测试** - 提供多种测试脚本和工具
 
 ## 🏗️ 项目架构
 
 ### 技术栈
 - **后端 API 服务**: Go 1.21+ (Gin 框架)
-- **业务逻辑服务**: Java 11+ (Spring Boot 2.7+)
 - **前端界面**: Vue 3 + Element Plus + Vite
 - **模型推理**: llama.cpp (GGUF 格式)
-- **认证系统**: Keycloak + JWT
-- **数据库**: SQLite / MySQL
+- **认证系统**: JWT
+- **数据库**: SQLite
 
 ### 服务架构
 ```
-Frontend (Vue 3) → Go API Server → Java Spring Boot → llama.cpp
-                                ↓
-                           Keycloak Auth
-                                ↓
-                           SQLite/MySQL
+Frontend (Vue 3) → Go API Server → llama.cpp
+       :5173            :8080        :8081-8085
+                           ↓
+                      SQLite DB
 ```
 
 ## 📋 系统要求
@@ -44,7 +42,7 @@ Frontend (Vue 3) → Go API Server → Java Spring Boot → llama.cpp
 - **内存**: 16GB RAM
 - **存储**: 20GB 可用空间
 - **操作系统**: macOS 10.15+ / Ubuntu 20.04+ / CentOS 8+
-- **软件依赖**: Go 1.21+, Java 11+, Node.js 16+
+- **软件依赖**: Go 1.21+, Node.js 16+
 
 ### 推荐配置
 - **CPU**: 16 核心以上 (Intel/AMD/Apple Silicon)
@@ -63,12 +61,10 @@ cd LLM_API
 
 # 安装系统依赖 (Ubuntu/Debian)
 sudo apt update
-sudo apt install -y build-essential git wget curl
-sudo apt install -y openjdk-11-jdk maven nodejs npm
+sudo apt install -y build-essential git wget curl nodejs npm
 
 # 安装系统依赖 (macOS)
-brew install git wget curl maven node
-# Java 11 通过 brew 或 Oracle 官网安装
+brew install git wget curl node
 ```
 
 ### 2. 设置 llama.cpp
@@ -95,15 +91,6 @@ cd backend
 go mod tidy
 go run main.go
 # 服务运行在 http://localhost:8080
-```
-
-#### 启动业务逻辑服务 (Java Spring Boot)
-```bash
-# 在项目根目录
-mvn clean package -DskipTests
-java -jar target/*.jar
-# 或使用启动脚本
-./start-llm-service.sh
 ```
 
 #### 启动前端服务 (Vue 3)
@@ -149,14 +136,7 @@ export GOMAXPROCS=12  # 建议设置为 CPU 核心数
 export GOGC=100       # GC 触发百分比
 ```
 
-#### Java Spring Boot 配置
-```bash
-# JVM 内存配置
-export JAVA_OPTS="-Xmx8g -Xms4g -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
 
-# 针对大内存服务器
-export JAVA_OPTS="-Xmx16g -Xms8g -XX:+UseG1GC -XX:G1HeapRegionSize=16m"
-```
 
 #### llama.cpp 线程配置
 ```bash
@@ -220,15 +200,16 @@ Content-Type: multipart/form-data
 POST /api/convert
 ```
 
-### Java Spring Boot 服务 (端口 8081)
-
 #### 认证接口
 ```bash
+# 用户注册
+POST /api/auth/register
+
 # 用户登录
 POST /api/auth/login
 
 # 获取用户信息
-GET /api/auth/user
+GET /api/auth/profile
 Authorization: Bearer <token>
 ```
 
@@ -272,10 +253,9 @@ docker-compose logs -f
 ```
 
 ### 服务端口映射
-- **前端服务**: http://localhost:3000
+- **前端服务**: http://localhost:5173
 - **Go API 服务**: http://localhost:8080
-- **Java Spring Boot**: http://localhost:8081
-- **Keycloak**: http://localhost:8082
+- **llama.cpp 服务**: http://localhost:8081-8085
 
 ### 自定义 Dockerfile
 
@@ -322,12 +302,11 @@ go version
 cd backend && go build -o main .
 ```
 
-2. **Java 服务内存不足**
+2. **内存不足**
 ```bash
 # 检查内存使用
 free -h
-# 减少 JVM 堆内存
-export JAVA_OPTS="-Xmx4g -Xms2g"
+# 使用更小的模型或减少并发数
 ```
 
 3. **模型加载失败**
@@ -361,9 +340,6 @@ make -j$(nproc)
 # 查看 Go 服务日志
 tail -f logs/http.log
 
-# 查看 Java 服务日志
-tail -f logs/llm-app.log
-
 # 查看 llama-server 日志
 tail -f logs/llama-server.log
 ```
@@ -374,9 +350,6 @@ tail -f logs/llama-server.log
 ```bash
 # Go API 服务健康检查
 curl http://localhost:8080/api/health
-
-# Java Spring Boot 健康检查
-curl http://localhost:8081/actuator/health
 
 # 前端服务检查
 curl http://localhost:5173
@@ -389,9 +362,6 @@ ps aux | grep -E "(main|java|node)"
 
 # Go 服务内存使用
 ps aux | grep main
-
-# Java 服务内存使用
-ps aux | grep java
 
 # 模型推理统计
 curl http://localhost:8080/api/models/status
@@ -433,7 +403,7 @@ curl http://localhost:8080/api/models/status
    - 设置资源限制和环境变量
 
 5. **安全加固**
-   - 启用 Keycloak 认证和授权
+   - 启用 JWT 认证和授权
    - 配置防火墙和网络安全组
    - 定期更新依赖和安全补丁
    - 设置 API 限流和访问控制
@@ -453,7 +423,6 @@ curl http://localhost:8080/api/models/status
 - [GGUF 格式说明](https://github.com/ggerganov/ggml/blob/master/docs/gguf.md)
 
 ### 认证和安全
-- [Keycloak 官方文档](https://www.keycloak.org/documentation)
 - [JWT 认证指南](https://jwt.io/introduction)
 
 ### 部署和运维
